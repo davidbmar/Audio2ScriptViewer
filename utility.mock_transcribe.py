@@ -33,7 +33,7 @@ def send_to_final_file_queue(filename, transcribed_message):
         'filename': filename,
         'transcribed_message': transcribed_message
     }
-    FINAL_QUEUE_URL = 'https://sqs.us-east-2.amazonaws.com/635071011057/sqs_queue_runpodio_whisperprocessor_us_east_2_completed_transcription_nonfifo'
+    FINAL_QUEUE_URL = 'https://sqs.us-east-2.amazonaws.com/635071011057/test_input.fifo'
     print(f"Sending the following message to SQS {FINAL_QUEUE_URL}: {message_body}")
 
     # Generate a MessageDeduplicationId
@@ -42,6 +42,8 @@ def send_to_final_file_queue(filename, transcribed_message):
     response = sqs.send_message(
         QueueUrl=FINAL_QUEUE_URL,
         MessageBody=json.dumps(message_body),
+        MessageGroupId='YourMessageGroupId',  # Replace with an appropriate group ID for your use case
+        MessageDeduplicationId=message_deduplication_id,
     )
     print(f"Message sent with ID: {response['MessageId']}")
 

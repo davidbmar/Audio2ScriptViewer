@@ -49,10 +49,10 @@ def update_csv_with_messages(messages, csv_filename="output.csv"):
             cleaned_message = clean_message(message['transcribed_message'])
             writer.writerow([message['filename'], cleaned_message])
 
-def retrieve_messages_from_sqs(queue_url, num_messages=10):
+def retrieve_messages_from_sqs(input_queue_url, num_messages=10):
     sqs_client = boto3.client('sqs', region_name='us-east-2')
     response = sqs_client.receive_message(
-        QueueUrl=queue_url,
+        QueueUrl=input_queue_url,
         MaxNumberOfMessages=num_messages
     )
 
@@ -67,21 +67,22 @@ def retrieve_messages_from_sqs(queue_url, num_messages=10):
     # Batch delete processed messages
     if receipt_handles:
         entries = [{'Id': str(i), 'ReceiptHandle': rh} for i, rh in enumerate(receipt_handles)]
-        sqs_client.delete_message_batch(QueueUrl=queue_url, Entries=entries)
+        sqs_client.delete_message_batch(QueueUrl=input_queue_url, Entries=entries)
 
     return messages
 
 def main():
     # Continuously poll SQS queue and update CSV
-    queue_url = 'https://sqs.us-east-2.amazonaws.com/635071011057/sqs_queue_runpodio_whisperprocessor_us_east_2_completed_transcription_nonfifo'
+    #queue_url = 'https://sqs.us-east-2.amazonaws.com/635071011057/sqs_queue_runpodio_whisperprocessor_us_east_2_completed_transcription_nonfifo'
+    input_queue_url = 'https://sqs.us-east-2.amazonaws.com/635071011057/test_input.fifo'
 
     if args.run_once:
         print("Retrieving messages once then exiting.")
-        retrieve_messages_from_sqs(queue_url)
+        retrieve_messages_from_sqs(input_queue_url)
     else:
         print(f"Looping every {args.loop_every_x_seconds} seconds.")
         while True:
-            retrieve_messages_from_sqs(queue_url)
+            retrieve_messages_from_sqs(input_queue_url)
             time.sleep(args.loop_every_x_seconds)
 
 if __name__ == "__main__":

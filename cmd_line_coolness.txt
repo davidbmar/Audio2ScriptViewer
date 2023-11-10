@@ -1,0 +1,15 @@
+#This is a list of things i usually run to make the shell better.
+#first Edit ~/.bashrc and fixup PS1 - This is the prompt.
+#Replace the PS with this line, which puts a better prompt and helps me remember this is a docker Container.
+
+PS1="\[\033[33m\]DOCKER\[\033[0m\]:\[\033[34m\]\$(date +'%Y-%m-%d %Z')\[\033[0m\] \[\033[32m\]\$(date +'%I:%M:%S %p')\[\033[0m\] \w \$ "
+
+# Set the terminal to vi mode also if you want in the .bashrc
+set -o vi
+
+#
+export OPENAI_API_KEY=PUT_KEY_HERE
+git remote set-url origin https://<<<<<YOUR GIT TOKEN HERE>>>>@github.com/davidbmar/Audio2ScriptViewer.git
+
+
+
